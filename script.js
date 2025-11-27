@@ -22,19 +22,34 @@ function windDirection(deg) {
 async function meteo(city) {
     for (let key of apiKeys) {
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${key}&units=metric`;
+
         try {
             const res = await fetch(url);
-            if (!res.ok) {
-                continue; // passe à la clé suivante
+            if (res.status === 401) {
+                continue;
             }
-            const data = await res.json();
-            return data; // succès, on retourne les données
+            if (res.status === 404) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Ville introuvable");
+            }
+            if (!res.ok) {
+                throw new Error("Erreur API: " + res.status);
+            }
+            return await res.json();
+
         } catch (err) {
+            if (err.message === "city not found" || err.message === "Ville introuvable") {
+                throw err;
+            }
+
             continue;
         }
     }
+
     throw new Error("Toutes les clés API ont échoué");
 }
+
+
 
 btn.addEventListener("click",()=> {
     let ville = input.value.trim().toLowerCase();
@@ -46,7 +61,8 @@ btn.addEventListener("click",()=> {
     result.innerHTML=""
     result.innerText="Chargement...."
     meteo(ville)
-        .then(data => result.innerHTML=`
+        .then(data =>
+            result.innerHTML=`
             <p>Ville : ${data.name}</p>
             <p>Pays : ${data.sys.country}</p>
             <p>Température : ${data.main.temp}°C</p>
@@ -59,7 +75,7 @@ btn.addEventListener("click",()=> {
             <p>Nuages : ${data.clouds.all}%</p>
             <p>Visibilité : ${data.visibility}m</p>
             `)
-        .catch(err => console.error(err.message));
+        .catch(err => result.innerHTML = err.message);
     input.value="";
 });
 input.addEventListener('keydown', (e) => {
@@ -73,7 +89,8 @@ if(!ville.trim()){
     result.innerHTML=""
     result.innerText="Chargement...."
     meteo(ville)
-        .then(data => result.innerHTML=`
+        .then(data =>
+            result.innerHTML=`
             <p>Ville : ${data.name}</p>
             <p>Pays : ${data.sys.country}</p>
             <p>Température : ${data.main.temp}°C</p>
@@ -86,7 +103,7 @@ if(!ville.trim()){
             <p>Nuages : ${data.clouds.all}%</p>
             <p>Visibilité : ${data.visibility}m</p>
             `)
-        .catch(err => console.error(err.message));
+        .catch(err => result.innerHTML = err.message);
     input.value="";
 }
 });
