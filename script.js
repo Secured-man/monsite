@@ -8,8 +8,6 @@ const apiKeys=[
 ]
 let result = document.createElement("div");
 body.appendChild(result);
-input.value = input.value.trim().toLowerCase();
-input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
 function windDirection(deg) {
     if (deg > 337.5 || deg <= 22.5) return "N";
     if (deg > 22.5 && deg <= 67.5) return "NE";
@@ -39,14 +37,15 @@ async function meteo(city) {
 }
 
 btn.addEventListener("click",()=> {
-    
-    if(!input.value.trim()){
+    let ville = input.value.trim().toLowerCase();
+    ville = ville.charAt(0).toUpperCase() + ville.slice(1);
+    if(!ville.trim()){
     result.innerText="Ecrivez le nom d'une ville";
     return;
     }
     result.innerHTML=""
     result.innerText="Chargement...."
-    meteo(input.value)
+    meteo(ville)
         .then(data => result.innerHTML=`
             <p>Ville : ${data.name}</p>
             <p>Pays : ${data.sys.country}</p>
@@ -61,16 +60,19 @@ btn.addEventListener("click",()=> {
             <p>Visibilité : ${data.visibility}m</p>
             `)
         .catch(err => console.error(err.message));
+    input.value="";
 });
 input.addEventListener('keydown', (e) => {
 if (e.key === 'Enter'){
-if(!input.value.trim()){
+let ville = input.value.trim().toLowerCase();
+ville = ville.charAt(0).toUpperCase() + ville.slice(1);
+if(!ville.trim()){
     result.innerText="Ecrivez le nom d'une ville";
     return;
     }
     result.innerHTML=""
     result.innerText="Chargement...."
-    meteo(input.value)
+    meteo(ville)
         .then(data => result.innerHTML=`
             <p>Ville : ${data.name}</p>
             <p>Pays : ${data.sys.country}</p>
@@ -85,5 +87,6 @@ if(!input.value.trim()){
             <p>Visibilité : ${data.visibility}m</p>
             `)
         .catch(err => console.error(err.message));
+    input.value="";
 }
 });
