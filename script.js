@@ -131,6 +131,7 @@ btn.addEventListener("click",()=> {
         .catch(err => result.innerHTML = err.message);
     saveHistory(ville);
     input.value="";
+    sugestionsBox.style.display="none";
 });
 input.addEventListener('keydown', (e) => {
 if (e.key === 'Enter'){
@@ -160,5 +161,6 @@ if(!ville.trim()){
         .catch(err => result.innerHTML = err.message);
     saveHistory(ville);
     input.value="";
+    sugestionsBox.style.display="none";
 }
 });
