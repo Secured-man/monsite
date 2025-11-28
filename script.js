@@ -100,7 +100,7 @@ input.addEventListener("input",()=>{
 });
 document.addEventListener("click", function(e) {
     if (!e.target.closest(".auto-complete")) {
-        sugestionBox.style.display = "none";
+        sugestionsBox.style.display = "none";
     };
     });
 
